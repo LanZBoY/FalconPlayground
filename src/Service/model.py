@@ -11,3 +11,5 @@ class UserModel(Base):
 
     username = Column(String, nullable = False)
     password = Column(String, nullable = False)
+    email = Column(String)
+    address = Column(String)

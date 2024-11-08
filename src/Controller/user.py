@@ -24,31 +24,37 @@ class UserApi:
                 session.add(createUser)
             except Exception as e:
                 raise falcon.HTTPBadRequest(title="Client Error", description=str(e))
-        resp.media = {
-            "id" : createUser.id
-        }
         resp.status = falcon.status_codes.HTTP_201
 
-    async def on_put(self, req: Request, resp: Response, id : int):
-        reqData : dict = await req.get_media()
-        with SessionContext() as session:
-            try:
-                res = session.query(UserModel).where(UserModel.id == id).update(
-                    reqData
-                )
-            except Exception as e:
-                raise falcon.HTTPBadRequest(title="Client Error", description=str(e))
+    async def on_post_login(self, req: Request, resp: Response):
+        reqData = await req.get_media()
+
+        
 
 
-    async def on_delete(self, req: Request, resp: Response, id: int):
-        with SessionContext() as session:
-            try:
-                res = session.query(UserModel).where(UserModel.id == id).first()
-                session.delete(res)
-            except Exception as e:
-                raise falcon.HTTPBadRequest(title="Client Error", description=str(e))
+    # TODO:Only Admin can delete data.
+    # TODO:Only user owner can modify data. 
+
+    # async def on_put(self, req: Request, resp: Response, id : int):
+    #     reqData : dict = await req.get_media()
+    #     with SessionContext() as session:
+    #         try:
+    #             res = session.query(UserModel).where(UserModel.id == id).update(
+    #                 reqData
+    #             )
+    #         except Exception as e:
+    #             raise falcon.HTTPBadRequest(title="Client Error", description=str(e))
+
+
+    # async def on_delete(self, req: Request, resp: Response, id: int):
+    #     with SessionContext() as session:
+    #         try:
+    #             res = session.query(UserModel).where(UserModel.id == id).first()
+    #             session.delete(res)
+    #         except Exception as e:
+    #             raise falcon.HTTPBadRequest(title="Client Error", description=str(e))
             
-            resp.status = falcon.HTTP_204
+    #         resp.status = falcon.HTTP_204
         
         
 
