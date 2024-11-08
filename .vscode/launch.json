@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Run Service",
+            "name": "Run Service",
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
@@ -14,7 +14,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Python Debugger: Migration Upgrade",
+            "name": "Migration Upgrade",
             "type": "debugpy",
             "request": "launch",
             "module": "alembic",
@@ -22,7 +22,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Python Debugger: Migration Downgrade -1",
+            "name": "Migration Downgrade -1",
             "type": "debugpy",
             "request": "launch",
             "module": "alembic",
