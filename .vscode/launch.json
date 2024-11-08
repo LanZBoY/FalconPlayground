@@ -10,7 +10,7 @@
             "request": "launch",
             "module": "uvicorn",
             "cwd": "${workspaceFolder}/src",
-            "args": ["service:app", "--port", "8080"],
+            "args": ["--port", "8080", "--reload" , "service:app"],
             "console": "integratedTerminal"
         },
         {
