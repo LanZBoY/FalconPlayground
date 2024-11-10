@@ -4,7 +4,7 @@ from falcon import Request, Response
 from Service import SessionContext, UserModel
 from RequestModel import UserDTO
 
-class UserApi:
+class UserAPI:
 
     async def on_get(self, req : Request, resp : Response):
         with SessionContext() as session:
@@ -25,9 +25,6 @@ class UserApi:
             except Exception as e:
                 raise falcon.HTTPBadRequest(title="Client Error", description=str(e))
         resp.status = falcon.status_codes.HTTP_201
-
-    async def on_post_login(self, req: Request, resp: Response):
-        reqData = await req.get_media()
 
         
 
