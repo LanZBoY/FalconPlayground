@@ -11,11 +11,12 @@ from RequestModel import JWTPayload
 
 class AuthRequired:
 
-    def __init__(self, role_required : Iterable = [UserRole.ADMIN,]) -> None:
+    def __init__(self, role_required : Iterable = [UserRole.ADMIN,], fetchJWTData = True) -> None:
         self.role_required = set(role_required)
+        self.fetchJWTData = fetchJWTData
 
 
-    async def __call__(self, req: Request, resp: Response , resource, params) -> Any:
+    async def __call__(self, req: Request, resp: Response , resource, params : dict) -> Any:
         token : str = req.get_header(name="Authorization", default=None)
         _ , token = token.split(" ")
         try:
@@ -24,9 +25,13 @@ class AuthRequired:
 
         except jwt.InvalidSignatureError or jwt.InvalidTokenError as e:
             raise falcon.HTTPBadRequest(description="Token was invalided...")
+        
         except Exception as e:
             raise falcon.HTTPBadRequest(description=str(e))
         
         if(userContent.role not in self.role_required):
             raise falcon.HTTPForbidden()
+        
+        if (self.fetchJWTData):
+            params['user'] = userContent
         
