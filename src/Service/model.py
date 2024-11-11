@@ -15,7 +15,7 @@ class UserModel(Base):
     address = Column(String)
     role = Column(Enum(UserRole), nullable = False)
 
-    posts = relationship("post", back_populates = "user")
+    posts = relationship("PostModel")
     
 
 class PostModel(Base):
@@ -27,4 +27,4 @@ class PostModel(Base):
     title = Column(String, nullable = False)
     content = Column(String, nullable = False)
 
-    user = relationship("user", back_populates = "post")
+    user = relationship("UserModel")
