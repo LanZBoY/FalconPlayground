@@ -1,5 +1,5 @@
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import Integer, String,Column, Enum
+from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import Integer, String,Column, Enum, ForeignKey
 from utils.role import UserRole
 Base = declarative_base()
 
@@ -14,4 +14,17 @@ class UserModel(Base):
     email = Column(String)
     address = Column(String)
     role = Column(Enum(UserRole), nullable = False)
+
+    posts = relationship("post", back_populates = "user")
     
+
+class PostModel(Base):
+
+    __tablename__ = "post"
+
+    id = Column(Integer, primary_key = True)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable = False)
+    title = Column(String, nullable = False)
+    content = Column(String, nullable = False)
+
+    user = relationship("user", back_populates = "post")

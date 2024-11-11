@@ -10,8 +10,13 @@ class JWTPayload(BaseModel):
 class BaseUserModel(BaseModel):
     model_config = ConfigDict(from_attributes= True)
 
-class UserListView(BaseUserModel):
+class AdminView_User(BaseUserModel):
     id : int = Field()
+    username: str = Field(min_length=1)
+    email: str = Field(min_length=1, pattern = r"^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$")
+    address: str = Field(min_length=1)    
+
+class OwnerView_User(BaseUserModel):
     username: str = Field(min_length=1)
     email: str = Field(min_length=1, pattern = r"^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$")
     address: str = Field(min_length=1)    
@@ -25,3 +30,7 @@ class UserRegisterDTO(BaseUserModel):
 class UserLoginDTO(BaseUserModel):
     username: str = Field(min_length=1)
     password: str = Field(min_length=1)
+
+class UserUpdateDTO(BaseUserModel):
+    email: str = Field(min_length=1, pattern = r"^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$")
+    address: str = Field(min_length=1)
