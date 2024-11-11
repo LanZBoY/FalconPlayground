@@ -1,11 +1,7 @@
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Integer, String,Column, Enum
-import enum
+from utils.role import UserRole
 Base = declarative_base()
-
-class UserRole(enum.Enum):
-    ADMIN = 0
-    NORMAL = 1
 
 class UserModel(Base):
 

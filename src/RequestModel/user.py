@@ -1,13 +1,27 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
+from utils.role import UserRole
 
-class UserDTO(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    id : int
-    username: str
 
-class UserLoginDTO(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+class JWTPayload(BaseModel):
+    model_config = ConfigDict(from_attributes=True, populate_by_name = True)
+    user_id : int = Field(alias="id")
+    role : UserRole = Field()
 
-    username: str
-    password: str
-    
+class BaseUserModel(BaseModel):
+    model_config = ConfigDict(from_attributes= True)
+
+class UserListView(BaseUserModel):
+    id : int = Field()
+    username: str = Field(min_length=1)
+    email: str = Field(min_length=1, pattern = r"^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$")
+    address: str = Field(min_length=1)    
+
+class UserRegisterDTO(BaseUserModel):
+    username: str = Field(min_length=1)
+    password: str = Field(min_length=1)
+    email: str = Field(min_length=1, pattern = r"^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$")
+    address: str = Field(min_length=1)
+
+class UserLoginDTO(BaseUserModel):
+    username: str = Field(min_length=1)
+    password: str = Field(min_length=1)
