@@ -37,15 +37,12 @@ class SuperUserAPI:
         except pydantic_core.ValidationError as e:
             raise falcon.HTTPBadRequest(description=e.errors())
 
-
-
-
-
 class UserAPI:
 
     @falcon.before(AuthRequired(role_required=UserRoleGroup.ALL_USER))
-    async def on_get_me(self, req: Request, resp: Response, user : JWTPayload):
-        
+    async def on_get_me(self, req: Request, resp: Response):
+        user : JWTPayload = req.context.user
+
         with SessionContext() as session:
             try:
                 query : Query = session.query(UserModel.username, UserModel.email, UserModel.address).where(UserModel.id == user.user_id)
@@ -57,7 +54,9 @@ class UserAPI:
             resp.media = res
 
     @falcon.before(AuthRequired(role_required=UserRoleGroup.ALL_USER))
-    async def on_put_me(self, req: Request, resp: Response, user: JWTPayload):
+    async def on_put_me(self, req: Request, resp: Response):
+        user : JWTPayload = req.context.user
+
         reqData = await req.get_media()
         reqData = UserUpdateDTO.model_validate(reqData).model_dump()
         try:
@@ -72,7 +71,7 @@ class UserAPI:
 
     # Only Admin can get All user...
     @falcon.before(AuthRequired(role_required=UserRoleGroup.ONLY_ADMIN))
-    async def on_get(self, req : Request, resp : Response, **kwargs):
+    async def on_get(self, req : Request, resp : Response):
 
         try:
             with SessionContext() as session:
@@ -84,20 +83,10 @@ class UserAPI:
         users = [AdminView_User.model_validate(user).model_dump() for user in user_list]
         resp.media = users
 
-    # TODO:Only user owner can modify data. 
-    # async def on_put(self, req: Request, resp: Response, id : int):
-    #     reqData : dict = await req.get_media()
-    #     with SessionContext() as session:
-    #         try:
-    #             res = session.query(UserModel).where(UserModel.id == id).update(
-    #                 reqData
-    #             )
-    #         except Exception as e:
-    #             raise falcon.HTTPBadRequest(title="Client Error", description=str(e))
 
     @falcon.before(AuthRequired(role_required=UserRoleGroup.ONLY_ADMIN))
-    async def on_delete(self, req: Request, resp: Response, id: int, **kwargs):
-
+    async def on_delete(self, req: Request, resp: Response, id: int):
+        user : JWTPayload = req.context.user
         if(id is None):
             raise falcon.HTTPBadRequest()
         try:
@@ -108,7 +97,7 @@ class UserAPI:
                     resp.status = falcon.HTTP_NO_CONTENT
                     return
 
-                if(res.role != UserRole.ADMIN):
+                if(user.role != UserRole.ADMIN):
                     raise falcon.HTTPForbidden(description="")
                 
                 session.delete(res)
