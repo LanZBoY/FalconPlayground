@@ -4,6 +4,7 @@ import hashlib
 import falcon.status_codes
 from falcon import Request, Response
 from sqlalchemy.orm import Query
+from sqlalchemy.engine import Row
 
 from Service import SessionContext, UserModel
 from middleware import AuthRequired
@@ -46,8 +47,8 @@ class UserAPI:
         with SessionContext() as session:
             try:
                 query : Query = session.query(UserModel.username, UserModel.email, UserModel.address).where(UserModel.id == user.user_id)
-                userData : UserModel = query.first()
-                res = OwnerView_User.model_validate(userData).model_dump()
+                userData : Row = query.first()
+                res = OwnerView_User.model_construct(**userData).model_dump()
             except Exception as e:
                 raise falcon.HTTPBadRequest(description=str(e))
             
@@ -76,11 +77,11 @@ class UserAPI:
         try:
             with SessionContext() as session:
                 query : Query = session.query(UserModel.id, UserModel.username, UserModel.email, UserModel.address)
-                user_list = query.all()
+                user_list : Row = query.all()
         except Exception as e:
             raise falcon.HTTPInternalServerError(title="ERROR", description=str(e))
         
-        users = [AdminView_User.model_validate(user).model_dump() for user in user_list]
+        users = [AdminView_User.model_construct(**user).model_dump() for user in user_list]
         resp.media = users
 
 

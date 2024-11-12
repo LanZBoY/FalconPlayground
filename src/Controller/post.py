@@ -21,7 +21,9 @@ class PostAPI:
                 query = session.query(PostModel)
                 posts :List[PostModel]= query.all()
                 
-                results = [UserViewPostModel.model_validate(post).model_dump() for post in posts]
+                results = [UserViewPostModel.model_construct(**post.__dict__).model_dump() for post in posts]
+                for post in posts:
+                    print(post.__dict__)
 
 
         except Exception as e:
