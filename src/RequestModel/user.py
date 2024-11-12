@@ -4,7 +4,7 @@ from utils.role import UserRole
 
 class JWTPayload(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name = True)
-    user_id : int = Field(alias="id")
+    user_id : int = Field(None, alias="id")
     role : UserRole = Field()
 
 class BaseUserModel(BaseModel):
@@ -34,3 +34,6 @@ class UserLoginDTO(BaseUserModel):
 class UserUpdateDTO(BaseUserModel):
     email: str = Field(min_length=1, pattern = r"^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$")
     address: str = Field(min_length=1)
+
+class AuthorDTO(BaseUserModel):
+    username: str = Field(min_length=1)
