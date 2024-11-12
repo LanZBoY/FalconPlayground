@@ -10,3 +10,8 @@ class BasePostModel(BaseModel):
 
 class UserViewPostModel(BasePostModel):
     author : AuthorDTO
+
+class UpdatePostModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    title : str = Field(min_length=1)
+    content : str = Field(min_length=1)
