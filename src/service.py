@@ -1,6 +1,6 @@
 # import falcon
 import falcon.asgi
-from Controller import SeverSendEvent, UserAPI, AuthAPI, SuperUserAPI, PostAPI, TagAPI, ChatAPI
+from Controller import UserAPI, AuthAPI, SuperUserAPI, PostAPI, TagAPI
 
 app = falcon.asgi.App()
 
