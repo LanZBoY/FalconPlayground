@@ -1,6 +1,6 @@
 # import falcon
 import falcon.asgi
-from Controller import OSEnv, UserAPI, AuthAPI, SuperUserAPI, PostAPI, TagAPI
+from Controller import SeverSendEvent, UserAPI, AuthAPI, SuperUserAPI, PostAPI, TagAPI, ChatAPI
 
 app = falcon.asgi.App()
 
@@ -23,3 +23,7 @@ app.add_route("/post/{id:int}", postAPI, suffix = "id")
 tagAPI = TagAPI()
 app.add_route("/tag", tagAPI)
 # app.add_route("/tag", tagAPI, suffix="byName")
+# sse = SeverSendEvent()
+# websocketRes = ChatAPI()
+# app.add_route("/sse", sse)
+# app.add_route("/ws", websocketRes)
