@@ -24,11 +24,13 @@ def upgrade():
     )
     op.create_table(
         "post_tag_relation",
-        sa.Column("post_id", sa.Integer, sa.ForeignKey("post.id")),
-        sa.Column("tag_id", sa.Integer, sa.ForeignKey("tag.id"))
+        sa.Column("post_id", sa.Integer, sa.ForeignKey("post.id", name="fk_post_id"), primary_key = True),
+        sa.Column("tag_id", sa.Integer, sa.ForeignKey("tag.id", name= "fk_tag_id"), primary_key = True)
     )
 
 
 def downgrade():
+    op.drop_constraint("fk_post_id", "post_tag_relation")
+    op.drop_constraint("fk_tag_id", "post_tag_relation")
     op.drop_table("tag")
     op.drop_table("post_tag_relation")

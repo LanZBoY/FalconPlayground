@@ -32,4 +32,5 @@ def upgrade():
 
 
 def downgrade():
+    op.drop_constraint("fk_post_user", "post")
     op.drop_table("post")
