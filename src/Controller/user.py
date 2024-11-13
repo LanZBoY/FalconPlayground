@@ -10,7 +10,7 @@ from Service import SessionContext, UserModel
 from middleware import AuthRequired
 from utils.role import UserRoleGroup, UserRole
 from utils.config import CREATE_SECRET
-from RequestModel import OwnerView_User, AdminView_User, UserUpdateDTO, JWTPayload, UserRegisterDTO
+from APIModel import OwnerView_User, AdminView_User, UserUpdateDTO, JWTPayload, UserRegisterDTO
 
 async def requireSecret(req: Request, resp: Response, resource, param : dict):
     reqData = await req.get_media()
@@ -48,7 +48,11 @@ class UserAPI:
             try:
                 query : Query = session.query(UserModel.username, UserModel.email, UserModel.address).where(UserModel.id == user.user_id)
                 userData : Row = query.first()
+                if(userData is None):
+                    raise falcon.HTTPNotFound()
                 res = OwnerView_User.model_construct(**userData).model_dump()
+            except falcon.HTTPError() as e:
+                raise e
             except Exception as e:
                 raise falcon.HTTPBadRequest(description=str(e))
             

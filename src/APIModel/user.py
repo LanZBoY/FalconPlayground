@@ -35,5 +35,7 @@ class UserUpdateDTO(BaseUserModel):
     email: str = Field(min_length=1, pattern = r"^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$")
     address: str = Field(min_length=1)
 
-class AuthorDTO(BaseUserModel):
-    username: str = Field(min_length=1)
+class UserView_PostAuthor(BaseUserModel):
+    id : int = Field(None)
+    email: str | None = None
+    username: str | None = None

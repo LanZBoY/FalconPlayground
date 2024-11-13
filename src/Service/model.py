@@ -21,6 +21,7 @@ class UserModel(Base):
 
 post_tag_relation_table = Table(
     "post_tag_relation",
+    Base.metadata,
     Column("post_id", Integer, ForeignKey("post.id"), primary_key = True),
     Column("tag_id", Integer, ForeignKey("tag.id"), primary_key = True)
 )    

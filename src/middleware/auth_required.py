@@ -5,7 +5,7 @@ from falcon import Request, Response
 
 from utils.role import UserRole
 from utils.config import SECRET
-from RequestModel import JWTPayload
+from APIModel import JWTPayload
 
 
 
@@ -14,7 +14,7 @@ class AuthRequired:
     def __init__(self, role_required : Iterable = [UserRole.ADMIN,]) -> None:
         self.role_required = set(role_required)
 
-    async def __call__(self, req: Request, resp: Response , resource, params : dict) -> Any:
+    async def __call__(self, req: Request, resp: Response , resource, params):
         authorization : str = req.get_header(name="Authorization", default=None)
         userContent = None
         try:

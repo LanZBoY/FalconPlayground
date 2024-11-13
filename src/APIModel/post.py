@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field
-from RequestModel import AuthorDTO
+from APIModel import UserView_PostAuthor
 from typing import Optional
 
 class BasePostModel(BaseModel):
@@ -8,8 +8,11 @@ class BasePostModel(BaseModel):
     title : str = Field(min_length=1)
     content : str = Field(min_length=1)
 
-class UserViewPostModel(BasePostModel):
-    author : AuthorDTO
+class UserViewListPostModel(BasePostModel):
+    pass
+
+class UserViewDetailPostModel(BasePostModel):
+    isOwner: bool = Field(None)
 
 class UpdatePostModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)

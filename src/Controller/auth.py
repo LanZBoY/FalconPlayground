@@ -9,7 +9,7 @@ from pydantic_core import ValidationError
 from sqlalchemy.orm import Query
 
 from Service import SessionContext, UserModel
-from RequestModel import UserRegisterDTO, UserLoginDTO, JWTPayload
+from APIModel import UserRegisterDTO, UserLoginDTO, JWTPayload
 from utils.config import SECRET
 
 class AuthAPI:

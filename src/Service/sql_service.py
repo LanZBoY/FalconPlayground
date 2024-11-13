@@ -19,7 +19,6 @@ class SessionContext:
         try:
             self.session.commit()
         except SQLAlchemyError as e:
-            print(e)
             self.session.rollback()
             raise falcon.HTTPBadRequest(title = "Acton exception.", code = "ACTION_EXCEPTION")
         self.session.close()

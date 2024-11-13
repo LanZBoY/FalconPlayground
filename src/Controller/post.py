@@ -8,7 +8,7 @@ from falcon import Request, Response
 
 from middleware import AuthRequired
 from Service import SessionContext, PostModel
-from RequestModel import JWTPayload, BasePostModel, UserViewPostModel, UpdatePostModel
+from APIModel import JWTPayload, BasePostModel, UserViewDetailPostModel, UserViewListPostModel, UpdatePostModel
 from utils.role import UserRoleGroup
 
 class PostAPI:
@@ -21,7 +21,7 @@ class PostAPI:
                 query = session.query(PostModel)
                 posts :List[PostModel]= query.all()
                 
-                results = [UserViewPostModel.model_construct(**post.__dict__).model_dump() for post in posts]
+                results = [UserViewListPostModel.model_construct(**post.__dict__).model_dump() for post in posts]
                 for post in posts:
                     print(post.__dict__)
 
@@ -51,9 +51,33 @@ class PostAPI:
             raise falcon.HTTPBadRequest(description=str(e))
 
         resp.status = falcon.HTTP_201
+
+    @falcon.before(AuthRequired(UserRoleGroup.PUBLIC))
+    async def on_get_id(self, req: Request, resp: Response, id: int):
+        user: JWTPayload = req.context.user
+        try:
+            with SessionContext() as session:
+                query: Query = session.query(PostModel).where(
+                    PostModel.id == id
+                )
+                postData: PostModel = query.first()
+
+                if postData is None:
+                    raise falcon.HTTPNotFound()
+                
+                repsData = UserViewDetailPostModel.model_construct(**postData.__dict__)
+                repsData.isOwner = True if (user.user_id == postData.user_id) else False
+        except falcon.HTTPError as e:
+            raise e
+        except Exception as e:
+            raise falcon.HTTPBadRequest(description=str(e))
+        
+        resp.media = repsData.model_dump()
+
+        
     
     @falcon.before(AuthRequired(UserRoleGroup.ALL_USER))
-    async def on_put(self, req: Request, resp: Response, id: int):
+    async def on_put_id(self, req: Request, resp: Response, id: int):
         user : JWTPayload = req.context.user
         try:
             reqData = await req.get_media()
@@ -86,7 +110,7 @@ class PostAPI:
 
     
     @falcon.before(AuthRequired(UserRoleGroup.ALL_USER))
-    async def on_delete(self, req: Request, resp: Response, id :str):
+    async def on_delete_id(self, req: Request, resp: Response, id :str):
         user : JWTPayload = req.context.user
 
         try:
@@ -110,3 +134,6 @@ class PostAPI:
             raise falcon.HTTPBadRequest(description=str(e))
 
         resp.status = falcon.HTTP_204
+
+class PostTagAPI:
+    pass
