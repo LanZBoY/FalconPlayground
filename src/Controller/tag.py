@@ -55,28 +55,5 @@ class TagAPI:
             raise e
         except Exception as e:
             raise falcon.HTTPBadRequest(description=str(e))
-        
-    # TODO: SearchTag
-    # async def on_get_byName(self, req: Request, resp: Response):
-    #     name = req.get_param("name")
-
-    #     try:
-    #         with SessionContext() as session:
-    #             if(name is None):
-    #                 query: Query = session.query(TagModel)
-    #             else:
-    #                 query: Query = session.query(TagModel).where(
-    #                     TagModel.name.ilike(name)
-    #                 )
-    #             tags = query.all()
-
-    #             respData = [BaseTagDTO.model_construct(**tag.__dict__).model_dump() for tag in tags]
-
-    #             resp.media = respData
-
-    #     except falcon.HTTPError as e:
-    #         raise e
-    #     except Exception as e:
-    #         raise falcon.HTTPBadRequest(description=str(e))
     
     

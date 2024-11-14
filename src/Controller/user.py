@@ -112,9 +112,3 @@ class UserAPI:
             raise falcon.HTTPBadRequest(description=str(e))
             
         resp.status = falcon.HTTP_204
-
-        
-        
-
-        
-        

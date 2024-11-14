@@ -19,12 +19,19 @@ class UserModel(Base):
     posts = relationship("PostModel", back_populates = "author", cascade = "all, delete")
 
 
-post_tag_relation_table = Table(
-    "post_tag_relation",
-    Base.metadata,
-    Column("post_id", Integer, ForeignKey("post.id"), primary_key = True),
-    Column("tag_id", Integer, ForeignKey("tag.id"), primary_key = True)
-)    
+# post_tag_relation_table = Table(
+#     "post_tag_relation",
+#     Base.metadata,
+#     Column("post_id", Integer, ForeignKey("post.id"), primary_key = True),
+#     Column("tag_id", Integer, ForeignKey("tag.id"), primary_key = True)
+# )
+
+class PostTagRelation(Base):
+
+    __tablename__ = "post_tag_relation"
+
+    post_id = Column(Integer, ForeignKey("post.id"), primary_key = True)
+    tag_id = Column(Integer, ForeignKey("tag.id"), primary_key = True)
 
 class PostModel(Base):
 
@@ -36,7 +43,7 @@ class PostModel(Base):
     content = Column(String, nullable = False)
 
     author = relationship("UserModel", back_populates = "posts")
-    tags = relationship("TagModel", secondary = post_tag_relation_table)
+    tags = relationship("TagModel", secondary = "post_tag_relation")
 
 
 

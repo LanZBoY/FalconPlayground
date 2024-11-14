@@ -1,17 +1,24 @@
+import logging
 from typing import List
 
 import falcon
 import pydantic_core
-from sqlalchemy.orm import Query
+import sqlalchemy
+from sqlalchemy.engine import Row
+from sqlalchemy.orm import Query, joinedload
 from falcon import Request, Response
 
 
 from middleware import AuthRequired
-from Service import SessionContext, PostModel
-from APIModel import JWTPayload, BasePostModel, UserViewDetailPostModel, UserViewListPostModel, UpdatePostModel
+from Service import SessionContext, PostModel, PostTagRelation
+from APIModel import JWTPayload, BasePostModel, UserViewDetailPostModel, UserViewListPostModel, UpdatePostModel,PostTagDTO
 from utils.role import UserRoleGroup
 
 class PostAPI:
+
+
+    def __init__(self) -> None:
+        self.logger = logging.getLogger(__name__)
 
     @falcon.before(AuthRequired(UserRoleGroup.PUBLIC))
     async def on_get(self, req : Request, resp : Response):
@@ -22,8 +29,6 @@ class PostAPI:
                 posts :List[PostModel]= query.all()
                 
                 results = [UserViewListPostModel.model_construct(**post.__dict__).model_dump() for post in posts]
-                for post in posts:
-                    print(post.__dict__)
 
 
         except Exception as e:
@@ -53,31 +58,40 @@ class PostAPI:
         resp.status = falcon.HTTP_201
 
     @falcon.before(AuthRequired(UserRoleGroup.PUBLIC))
-    async def on_get_id(self, req: Request, resp: Response, id: int):
+    async def on_get_id(self, req: Request, resp: Response, post_id: int):
         user: JWTPayload = req.context.user
         try:
             with SessionContext() as session:
                 query: Query = session.query(PostModel).where(
-                    PostModel.id == id
+                    PostModel.id == post_id
                 )
+
+                query = query.options(
+                    joinedload(PostModel.tags),
+                    joinedload(PostModel.author)
+                )
+
                 postData: PostModel = query.first()
 
                 if postData is None:
                     raise falcon.HTTPNotFound()
                 
-                repsData = UserViewDetailPostModel.model_construct(**postData.__dict__)
-                repsData.isOwner = True if (user.user_id == postData.user_id) else False
+                isOwner = True if (user.user_id == postData.user_id) else False
+
+                result = UserViewDetailPostModel.model_construct(**postData.__dict__)
+                result.isOwner = isOwner
+                respData = result.model_dump()
         except falcon.HTTPError as e:
             raise e
         except Exception as e:
             raise falcon.HTTPBadRequest(description=str(e))
         
-        resp.media = repsData.model_dump()
+        resp.media = respData
 
         
     
     @falcon.before(AuthRequired(UserRoleGroup.ALL_USER))
-    async def on_put_id(self, req: Request, resp: Response, id: int):
+    async def on_put_id(self, req: Request, resp: Response, post_id: int):
         user : JWTPayload = req.context.user
         try:
             reqData = await req.get_media()
@@ -110,7 +124,7 @@ class PostAPI:
 
     
     @falcon.before(AuthRequired(UserRoleGroup.ALL_USER))
-    async def on_delete_id(self, req: Request, resp: Response, id :str):
+    async def on_delete_id(self, req: Request, resp: Response, post_id :int):
         user : JWTPayload = req.context.user
 
         try:
@@ -135,5 +149,68 @@ class PostAPI:
 
         resp.status = falcon.HTTP_204
 
-class PostTagAPI:
-    pass
+
+    @falcon.before(AuthRequired(UserRoleGroup.ALL_USER))
+    async def on_post_tag(self, req: Request, resp: Response, post_id: int):
+        user: JWTPayload = req.context.user
+
+        try:
+            reqData = await req.get_media()
+            postAddDTO = PostTagDTO(post_id=post_id, tag_id=reqData['tag_id'])
+
+            with SessionContext() as session:
+
+                query: Query = session.query(PostModel.user_id).where(
+                    PostModel.id == post_id
+                )
+                result : Row = query.first()
+
+                if(result['user_id'] != user.user_id):
+                    raise falcon.HTTPForbidden(description="You are not the post owner")
+
+                postTagRelation = PostTagRelation(**postAddDTO.model_dump())
+                session.add(postTagRelation)
+
+        except falcon.HTTPError as e:
+            raise e
+        except pydantic_core.ValidationError as e:
+            raise falcon.HTTPBadRequest(description=e.errors(include_context=False, include_url=False))
+        except Exception as e:
+            self.logger.debug(e)
+            raise falcon.HTTPBadRequest()
+
+        
+
+    @falcon.before(AuthRequired(UserRoleGroup.ALL_USER))
+    async def on_delete_tag(self, req: Request, resp: Response, post_id: int):
+        user: JWTPayload = req.context.user
+        try:
+            reqData = await req.get_media()
+            postTagDTO = PostTagDTO(post_id=post_id, tag_id=reqData['tag_id'])
+            with SessionContext() as session:
+
+                query: Query = session.query(PostModel.user_id).where(
+                    PostModel.id == post_id
+                )
+                checkOwnerResult = query.first()
+
+                if(checkOwnerResult['user_id'] != user.user_id):
+                    raise falcon.HTTPForbidden(description="You are not the post owner")
+
+                query: Query = session.query(PostTagRelation).where(
+                    sqlalchemy.and_(
+                        PostTagRelation.post_id == post_id,
+                        PostTagRelation.tag_id == postTagDTO.tag_id
+                    )
+                )
+                query.delete()
+
+        except falcon.HTTPError as e:
+            raise e
+        except pydantic_core.ValidationError as e:
+            raise falcon.HTTPBadRequest(description=e.errors(include_context=False, include_url=False))
+        except Exception as e:
+            self.logger.debug(e)
+            raise falcon.HTTPBadRequest()
+        
+        resp.status = falcon.HTTP_204

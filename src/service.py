@@ -1,6 +1,15 @@
 # import falcon
 import falcon.asgi
-from Controller import UserAPI, AuthAPI, SuperUserAPI, PostAPI, TagAPI
+from Controller import (UserAPI,
+                        AuthAPI,
+                        SuperUserAPI,
+                        PostAPI, 
+                        TagAPI)
+import logging
+from utils.config import DEBUG_MODE
+
+if DEBUG_MODE:
+    logging.basicConfig(level=logging.DEBUG)
 
 app = falcon.asgi.App()
 
@@ -18,11 +27,14 @@ app.add_route("/user/{id:int}", userAPI)
 
 postAPI = PostAPI()
 app.add_route("/post", postAPI)
-app.add_route("/post/{id:int}", postAPI, suffix = "id")
+app.add_route("/post/{post_id:int}", postAPI, suffix = "id")
+app.add_route("/post/{post_id:int}/tag", postAPI, suffix = "tag")
+
 
 tagAPI = TagAPI()
 app.add_route("/tag", tagAPI)
-# app.add_route("/tag", tagAPI, suffix="byName")
+
+# sse and websocket are so cool!!!
 # sse = SeverSendEvent()
 # websocketRes = ChatAPI()
 # app.add_route("/sse", sse)
