@@ -1,11 +1,26 @@
-# import asyncio
-# import json
-# import falcon
-# from falcon.asgi import SSEvent, WebSocket
-# from falcon import Response, Request
-# from redis import asyncio as aioredis
+import asyncio
+import json
+from concurrent.futures import ThreadPoolExecutor
+import falcon
+from falcon.asgi import SSEvent, WebSocket
+from falcon import Response, Request
+from redis import asyncio as aioredis
 
-# from utils.config import REDIS_URL
+from utils.config import REDIS_URL
+
+class TestAPI:
+    async def get_result(self, future: asyncio.Future):
+        print("start")
+        await asyncio.sleep(5)
+        future.set_result("OK!")
+
+    async def on_get(self, req: Request, resp: Response):
+        
+        future = asyncio.Future()
+        task = asyncio.create_task(self.get_result(future=future))
+        await task
+        resp.media = {"status" : future.result()}
+        
 
 # class SeverSendEvent:
 #     async def on_get(self, req: Request, resp: Response):

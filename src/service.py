@@ -35,6 +35,9 @@ tagAPI = TagAPI()
 app.add_route("/tag", tagAPI)
 
 # sse and websocket are so cool!!!
+# from Controller import TestAPI
+# testAPI = TestAPI()
+# app.add_route("/test", testAPI)
 # sse = SeverSendEvent()
 # websocketRes = ChatAPI()
 # app.add_route("/sse", sse)
