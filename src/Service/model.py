@@ -2,6 +2,7 @@ from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy import Table, Column
 from sqlalchemy import Integer, String, Enum, ForeignKey
 from utils.role import UserRole
+
 Base = declarative_base()
 
 class UserModel(Base):

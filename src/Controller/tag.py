@@ -32,7 +32,6 @@ class TagAPI:
         except Exception as e:
             raise falcon.HTTPBadRequest(description=str(e))
     
-    # TODO: 建立Tag
     async def on_post(self, req: Request, resp: Response):
         reqData = await req.get_media()
         try:

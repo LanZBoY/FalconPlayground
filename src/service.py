@@ -5,6 +5,9 @@ from Controller import (UserAPI,
                         SuperUserAPI,
                         PostAPI, 
                         TagAPI)
+from Controller import (
+    SSEAPI, BroadcastAPI
+)
 import logging
 from utils.config import DEBUG_MODE
 
@@ -34,11 +37,8 @@ app.add_route("/post/{post_id:int}/tag", postAPI, suffix = "tag")
 tagAPI = TagAPI()
 app.add_route("/tag", tagAPI)
 
-# sse and websocket are so cool!!!
-# from Controller import TestAPI
-# testAPI = TestAPI()
-# app.add_route("/test", testAPI)
-# sse = SeverSendEvent()
-# websocketRes = ChatAPI()
-# app.add_route("/sse", sse)
-# app.add_route("/ws", websocketRes)
+broadcastApi = BroadcastAPI()
+app.add_route("/broadcast", broadcastApi)
+
+sseApi = SSEAPI()
+app.add_route("/sse", sseApi)
