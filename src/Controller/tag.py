@@ -4,11 +4,13 @@ import falcon
 from falcon import Request, Response
 
 from sqlalchemy.orm import Query
+
 # from sqlalchemy.engine import Row
 
 from Service import SessionContext
 from Service import TagModel
 from APIModel import BaseTagDTO
+
 
 class TagAPI:
 
@@ -17,7 +19,7 @@ class TagAPI:
         name = req.get_param("name")
         try:
             with SessionContext() as session:
-                if (name is None):
+                if name is None:
                     query: Query = session.query(TagModel)
                 else:
                     query: Query = session.query(TagModel).where(
@@ -25,13 +27,16 @@ class TagAPI:
                     )
                 tags: List[TagModel] = query.all()
 
-                respData = [BaseTagDTO.model_construct(**tag.__dict__).model_dump() for tag in tags]
+                respData = [
+                    BaseTagDTO.model_construct(**tag.__dict__).model_dump()
+                    for tag in tags
+                ]
 
                 resp.media = respData
 
         except Exception as e:
             raise falcon.HTTPBadRequest(description=str(e))
-    
+
     async def on_post(self, req: Request, resp: Response):
         reqData = await req.get_media()
         try:
@@ -41,18 +46,14 @@ class TagAPI:
                     TagModel.name == reqData.name
                 )
 
-                if (query.count() > 0):
+                if query.count() > 0:
                     raise falcon.HTTPBadRequest(description="Tag name has been exist.")
 
                 insertData = TagModel(**reqData.model_dump())
 
-                session.add(
-                    insertData
-                )
+                session.add(insertData)
 
         except falcon.HTTPError as e:
             raise e
         except Exception as e:
             raise falcon.HTTPBadRequest(description=str(e))
-    
-    

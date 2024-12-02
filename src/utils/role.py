@@ -6,8 +6,15 @@ class UserRole(enum.StrEnum):
     NORMAL = "NORMAL"
     GUEST = "GUEST"
 
+
 class UserRoleGroup:
-    PUBLIC = (UserRole.ADMIN, UserRole.NORMAL, UserRole.GUEST, )
-    ALL_USER = (UserRole.ADMIN, UserRole.NORMAL,)
+    PUBLIC = (
+        UserRole.ADMIN,
+        UserRole.NORMAL,
+        UserRole.GUEST,
+    )
+    ALL_USER = (
+        UserRole.ADMIN,
+        UserRole.NORMAL,
+    )
     ONLY_ADMIN = (UserRole.ADMIN,)
-    
