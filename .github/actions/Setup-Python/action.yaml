@@ -12,19 +12,19 @@ inputs:
       default: "Other workflow file..."
 
 runs:
-    using: "composite"
-    steps:
-      - name: check env variable
-        run: |
-            echo This event is trigger-by ${{inputs.trigger-by || 'push event'}}
-            echo Use python-version ${{inputs.python-version || '3.11.10'}}
+  using: "composite"
+  steps:
+    - name: check env variable
+      run: |
+        echo This event is trigger-by ${{inputs.trigger-by || 'push event'}}
+        echo Use python-version ${{inputs.python-version || '3.11.10'}}
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-            python-version: ${{inputs.python-version || '3.11.10'}}
-            
-      - name: 
-        run: |
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{inputs.python-version || '3.11.10'}}
+          
+    - name: 
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
