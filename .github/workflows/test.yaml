@@ -12,16 +12,12 @@ jobs:
         - name: checkout code
           uses: actions/checkout@v3
 
-        - name: debug
+        - name: Set up Environment
+          uses: ./.github/workflows/build.yaml
+          with:
+            python-version: "3.11.10"
+            trigger-by: "test workflow"
+
+        - name: install test Environment
           run: |
-            ls ./.github/workflows/ -a
-
-        # - name: Set up Environment
-        #   uses: ./.github/workflows/build.yaml
-        #   with:
-        #     python-version: "3.11.10"
-        #     trigger-by: "test workflow"
-
-        # - name: install test Environment
-        #   run: |
-        #     pip install -r requirements-test.txt
+            pip install -r requirements-test.txt
