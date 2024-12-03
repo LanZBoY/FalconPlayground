@@ -25,13 +25,13 @@ jobs:
         - name: start test
           run:
             python -m coverage run -m pytest src/test/
-            
+
         - name: generate test report
           run:
             coverage html
           
         - name: Archive coverage results
-          uses: actions/upload-artifact@v2
+          uses: actions/upload-artifact@v4
           with:
             name: coverage-report
             path: ./htmlcov
