@@ -9,11 +9,11 @@ jobs:
     test:
       runs-on: ubuntu-latest
       steps:
-        - name: checkout code
-          uses: actions/checkout@v3
+        # - name: checkout code
+        #   uses: actions/checkout@v3
         
         - name: Set up Environment
-          uses: .github/workflows/build.yaml
+          uses: ./.github/workflows/build.yaml
           with:
             python-version: "3.11.10"
             trigger-by: "test workflow"
