@@ -1,0 +1,23 @@
+name: Test Python
+
+on:
+  push:
+    branches: 
+        - dev/testcase
+
+jobs:
+    test:
+      runs-on: ubuntu-latest
+      steps:
+        - name: checkout code
+          uses: actions/checkout@v3
+
+        - name: Set up Environment
+          uses: ./.github/actions/Setup-Python/
+          with:
+            python-version: "3.11.10"
+            trigger-by: "test workflow"
+
+        - name: install test Environment
+          run: |
+            pip install -r requirements-test.txt
