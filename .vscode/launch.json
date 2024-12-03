@@ -10,24 +10,74 @@
             "request": "launch",
             "module": "uvicorn",
             "cwd": "${workspaceFolder}/src",
-            "args": ["--port", "8080", "--reload" , "service:app"],
-            "console": "integratedTerminal"
+            "args": [
+                "--port",
+                "8080",
+                "--reload",
+                "service:app"
+            ],
+            "console": "integratedTerminal",
+            "presentation": {
+                "hidden": false,
+                "group": "Main",
+                "order": 1
+            }
         },
         {
             "name": "Migration Upgrade",
             "type": "debugpy",
             "request": "launch",
             "module": "alembic",
-            "args": ["upgrade", "head"],
-            "console": "integratedTerminal"
+            "args": [
+                "upgrade",
+                "head"
+            ],
+            "console": "integratedTerminal",
+            "presentation": {
+                "hidden": false,
+                "group": "Main",
+                "order": 2
+            }
         },
         {
             "name": "Migration Downgrade -1",
             "type": "debugpy",
             "request": "launch",
             "module": "alembic",
-            "args": ["downgrade", "-1"],
-            "console": "integratedTerminal"
+            "args": [
+                "downgrade",
+                "-1"
+            ],
+            "console": "integratedTerminal",
+            "presentation": {
+                "hidden": false,
+                "group": "Main",
+                "order": 3
+            }
+        },
+        {
+            "name": "run converage",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "coverage",
+            "cwd": "${workspaceFolder}/src",
+            "args": [
+                "run",
+                "-m",
+                "pytest",
+                "-v",
+                "test/"
+            ]
+        },
+        {
+            "name": "Generate converage report",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "coverage",
+            "cwd": "${workspaceFolder}/src",
+            "args": [
+                "html"
+            ]
         }
     ]
 }

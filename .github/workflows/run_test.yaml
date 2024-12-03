@@ -21,3 +21,10 @@ jobs:
         - name: install test Environment
           run: |
             pip install -r requirements-test.txt
+        
+        - name: start test
+          run:
+            python -m coverage run -m pytest src/test/
+        - name: generate test report
+          run:
+            converage html
