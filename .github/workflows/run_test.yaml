@@ -27,4 +27,4 @@ jobs:
             python -m coverage run -m pytest src/test/
         - name: generate test report
           run:
-            converage html
+            coverage html
