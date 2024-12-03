@@ -1,0 +1,13 @@
+name: Deploy Project
+
+on:
+    push:
+        branches:
+            - dev/deploy
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: test
+              uses: ./.github/workflows/run_test.yaml
