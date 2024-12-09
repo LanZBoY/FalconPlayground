@@ -1,13 +1,14 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config, create_engine
-from sqlalchemy import pool
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine
+from Service.model import Base
 
 from alembic import context
 
 
 import os
+import sys
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -18,7 +19,6 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 DB_CONNECTION = os.environ.get("DB_CONNECTION")
-Base = declarative_base()
 
 # add your model's MetaData object here
 # for 'autogenerate' support

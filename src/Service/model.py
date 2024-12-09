@@ -26,7 +26,7 @@ class PostModel(Base):
     __tablename__ = "post"
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"))
     title = Column(String, nullable=False)
     content = Column(String, nullable=False)
 
@@ -47,3 +47,31 @@ class TagModel(Base):
     __tablename__ = "tag"
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
+
+
+class EmployeeModel(Base):
+
+    __tablename__ = "Employee"
+    id = Column(Integer, primary_key=True)
+    cn_name = Column(String, nullable=False)
+
+    departmets = relationship(
+        "Department", secondary="DepartmentModel", back_populates=""
+    )
+
+
+class DepartmentModel(Base):
+    __tablename__ = "Departemt"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+
+
+class DepartmentEmployeeRelation(Base):
+
+    __tablename__ = "Department_Employee_Relation"
+    employee_id = Column(
+        Integer, ForeignKey(EmployeeModel.id, ondelete="CASCADE"), primary_key=True
+    )
+    department_id = Column(
+        Integer, ForeignKey(DepartmentModel.id, ondelete="CASCADE"), primary_key=True
+    )
